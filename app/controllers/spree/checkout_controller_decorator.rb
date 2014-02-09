@@ -267,7 +267,7 @@ module Spree
 
     # hook to override paypal site options
     def paypal_site_opts
-      {:currency => payment_method.preferred_currency, :allow_guest_checkout => payment_method.preferred_allow_guest_checkout }
+      {:allow_guest_checkout => payment_method.preferred_allow_guest_checkout }
     end
 
     def order_opts(order, payment_method_id, stage)
@@ -393,7 +393,7 @@ module Spree
     end
 
     def all_opts(order, payment_method_id, stage=nil)
-      opts = fixed_opts.merge(order_opts(order, payment_method_id, stage)).merge(paypal_site_opts)
+      opts = fixed_opts.merge(order_opts(order, payment_method_id, stage)).merge(:currency => (order.currency || payment_method.preferred_currency)).merge(paypal_site_opts)
 
       if stage == "payment"
         opts.merge! flat_rate_shipping_and_handling_options(order, stage)
