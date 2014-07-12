@@ -136,6 +136,10 @@ module Spree
       method = Spree::Config[:auto_capture] ? :purchase : :authorize
       ppx_auth_response = gateway.send(method, (@order.total*100).to_i, opts)
 
+      if !ppx_auth_response.success? && ppx_auth_response.params['error_codes'].to_i == 10486
+        redirect_to(gateway.redirect_url_for(opts[:token], :review => payment_method.preferred_review)) and return
+      end
+
       paypal_account = Spree::PaypalAccount.find_by_payer_id(params[:PayerID])
 
       payment = @order.payments.create(
