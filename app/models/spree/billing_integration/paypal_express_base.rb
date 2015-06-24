@@ -29,8 +29,9 @@ class Spree::BillingIntegration::PaypalExpressBase < Spree::BillingIntegration
 
   def credit(*args)
     amount = args.shift
+    options = args.extract_options!
     response_code = args.first.is_a?(String) ? args.first : args[1]
-    provider.credit(amount, response_code, :currency => preferred_currency)
+    provider.credit(amount, response_code, :currency => (options[:currency] || preferred_currency))
   end
 
   def find_authorization(payment)
